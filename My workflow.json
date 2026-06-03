@@ -1,0 +1,124 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "medical-ai",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -400,
+        -96
+      ],
+      "id": "c81dc86a-3102-4e9b-88ce-92af4a5a88a7",
+      "name": "Webhook",
+      "webhookId": "822c6f25-164d-43cf-9eb6-f596045f8e63"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a friendly medical assistant AI.\n\nUser symptoms:\n{{$json.body.symptoms}}\n\nSelected language:\n{{$json.body.language}}\n\nIMPORTANT RULES:\n\n1. If language is \"telugu\":\n- Respond ONLY in Telugu language\n- Use simple Telugu words\n- Every field must be Telugu\n\n2. If language is \"english\":\n- Respond ONLY in very simple human English\n- Avoid difficult medical terms\n- Explain like talking to a normal person\n- Use short and easy sentences\n\n3. Disease image must be a REAL direct image URL ending with:\n.jpg or .png\n\n4. Medicine image URLs also must end with:\n.jpg or .png\n\n5. Do NOT use markdown\n6. Do NOT use ```json\n7. Return ONLY pure JSON\n\nReturn EXACTLY in this format:\n\n{\n  \"disease\":\"string\",\n  \"diseaseImage\":\"https://example.jpg\",\n  \"explanation\":\"string\",\n  \"medicines\":[\n    {\n      \"name\":\"medicine name\",\n      \"image\":\"https://example.jpg\"\n    },\n    {\n      \"name\":\"medicine name\",\n      \"image\":\"https://example.jpg\"\n    },\n    {\n      \"name\":\"medicine name\",\n      \"image\":\"https://example.jpg\"\n    }\n  ],\n  \"suggestions\":[\n    \"suggestion 1\",\n    \"suggestion 2\",\n    \"suggestion 3\"\n  ]\n}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an AI Medical Assistant.\n\nYour job:\n1. Analyze user symptoms dynamically.\n2. Detect the most likely disease or condition.\n3. Return:\n   - disease name\n   - disease image URL\n   - short explanation\n   - 3 medicines with medicine image URLs\n   - 4 suggestions\n\nLANGUAGE RULE:\n- If user language is \"english\", return EVERYTHING in English only.\n- If user language is \"telugu\", return EVERYTHING in Telugu only.\n- Never use any other language.\n\nIMPORTANT IMAGE RULES:\n- diseaseImage must ALWAYS be a valid direct image URL ending with .jpg or .png\n- medicine image URLs must also end with .jpg or .png\n- Use publicly accessible images only\n- Never return empty image links\n\nReturn ONLY valid JSON.\n\nJSON format:\n\n{\n  \"disease\": \"string\",\n  \"diseaseImage\": \"https://example.com/image.jpg\",\n\n  \"explanation\": \"string\",\n\n  \"medicines\": [\n    {\n      \"name\": \"string\",\n      \"image\": \"https://example.com/medicine.jpg\"\n    },\n    {\n      \"name\": \"string\",\n      \"image\": \"https://example.com/medicine.jpg\"\n    },\n    {\n      \"name\": \"string\",\n      \"image\": \"https://example.com/medicine.jpg\"\n    }\n  ],\n\n  \"suggestions\": [\n    \"string\",\n    \"string\",\n    \"string\",\n    \"string\"\n  ]\n}\n\nDo NOT:\n- use markdown\n- use ```json\n- add extra text\n- change JSON structure"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -80,
+        -96
+      ],
+      "id": "7ea6f5cd-38a6-4be8-940d-406311d9da98",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "=gemma3:1b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        112
+      ],
+      "id": "ed6c24bf-446c-4538-8453-21782ab28102",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "OV63cUzG53fkcbC0",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        336,
+        -64
+      ],
+      "id": "60532e97-187e-4e5f-8ec8-555731ad0b1d",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "22fa9df9-f8f5-4351-81a5-aba94c0d1f23",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0773c10fdd6dbfab658a88accf8e0ac3ff16e9805e9aeb18afe416c5750ca988"
+  },
+  "id": "HkeAV2u29tVmm7Lz",
+  "tags": []
+}

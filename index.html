@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<title>AI Medical Assistant</title>
+<style>
+body{
+font-family:Arial;
+background:#f4f6f8;
+padding:40px;
+}
+
+.container{
+background:white;
+padding:30px;
+border-radius:10px;
+width:500px;
+margin:auto;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+}
+
+button{
+margin-top:15px;
+padding:10px 20px;
+background:#007bff;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+.meds{
+display:flex;
+gap:20px;
+margin-top:10px;
+}
+
+.meds div{
+text-align:center;
+} </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>AI Medical Assistant</h2>
+<label>Select Language</label>
+
+<select id="language">
+    <option value="english">English</option>
+    <option value="telugu">Telugu</option>
+</select>
+<p>Enter your symptoms</p>
+
+<input id="symptoms" placeholder="Example: fever headache cough">
+
+<button onclick="diagnose()">Diagnose</button>
+
+<h3>Disease:</h3>
+<p id="disease"></p>
+ <img id="diseaseImage" width="250">
+<h3>Explanation:</h3>
+<p id="explanation"></p>
+
+<h3>Medicines:</h3>
+<div id="medicines" class="meds"></div>
+<h3>Suggestions:</h3>
+<ul id="suggestions"></ul>
+
+</div>
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>
